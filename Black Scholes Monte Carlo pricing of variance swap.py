@@ -33,12 +33,16 @@ dX = (r - 0.5 * sigma ** 2) * dt + sigma * random_numbers * np.sqrt(dt)
 X_vector[1:, :] = np.cumsum(dX, axis=0)
 S_vector = S0 * np.exp(X_vector)
 
-# Calculate log returns for all paths
-log_returns = np.diff(np.log(S_vector), axis=0)
+# Create observation grid by taking every 20th entry
+obs_grid = np.arange(0, nsteps + 1, 20)
+S_obs = S_vector[obs_grid, :]
+
+# Calculate log returns for observation grid
+log_returns_obs = np.diff(np.log(S_obs), axis=0)
 
 # Calculate annualized realized variance for each path
-realised_variances = 252 * np.var(log_returns, axis=0)
+realised_variances_obs = 252 * np.var(log_returns_obs, axis=0)
 
-mean = np.mean(realised_variances)
-mean_variance = np.mean(mean)
+# Calculate the mean variance
+mean_variance = np.mean(realised_variances_obs)
 print("Variance Swap Price: ", mean_variance)
